@@ -76,6 +76,7 @@ pipeline {
             steps {
                 sh '''
                     docker run --rm \
+                    --user root \
                     -v $(pwd):/report \
                     secfigo/nikto:latest \
                     -h http://100.31.192.76 \
