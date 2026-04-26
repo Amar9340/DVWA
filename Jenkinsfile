@@ -1,13 +1,11 @@
 pipeline {
     agent any
-
     environment {
         SONAR_TOKEN = credentials('sonarqube-token')
         DOJO_TOKEN = credentials('defectdojo-token')
         DOJO_URL = 'http://13.219.239.73:8080'
         ENGAGEMENT_ID = '1'
     }
-
     stages {
         stage('Clone Code') {
             steps {
@@ -16,7 +14,6 @@ pipeline {
                     url: 'https://github.com/Amar9340/DVWA'
             }
         }
-
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube') {
@@ -32,13 +29,11 @@ pipeline {
                 }
             }
         }
-
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t dvwa:latest .'
             }
         }
-
         stage('Trivy Scan') {
             steps {
                 sh '''
@@ -54,7 +49,6 @@ pipeline {
                 '''
             }
         }
-
         stage('Upload to DefectDojo') {
             steps {
                 sh '''
@@ -69,7 +63,6 @@ pipeline {
             }
         }
     }
-
     post {
         always {
             echo 'Pipeline finished!'
