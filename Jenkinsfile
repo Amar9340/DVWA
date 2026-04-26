@@ -1,9 +1,16 @@
 pipeline {
     agent any
     stages {
+        stage("Clone Code") {
+            steps {
+                git branch: "master",
+                    credentialsId: "github-credentials",
+                    url: "https://github.com/Amar9340/DVWA"
+            }
+        }
         stage("Build") {
             steps {
-                echo "Pipeline works"
+                echo "Build complete"
             }
         }
     }
