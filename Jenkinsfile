@@ -72,6 +72,19 @@ pipeline {
             }
         }
 
+        stage('Nikto Scan') {
+            steps {
+                sh '''
+                    docker run --rm \
+                    -v $(pwd):/report \
+                    secfigo/nikto:latest \
+                    -h http://100.31.192.76 \
+                    -o /report/nikto-report.xml \
+                    -Format xml || true
+                '''
+            }
+        }
+
         stage('Upload to DefectDojo') {
             steps {
                 sh '''
@@ -88,6 +101,14 @@ pipeline {
                     -F "scan_type=ZAP Scan" \
                     -F "engagement=$ENGAGEMENT_ID" \
                     -F "file=@zap-report.xml" \
+                    -F "active=true" \
+                    -F "verified=false"
+
+                    curl -X POST $DOJO_URL/api/v2/import-scan/ \
+                    -H "Authorization: Token $DOJO_TOKEN" \
+                    -F "scan_type=Nikto Scan" \
+                    -F "engagement=$ENGAGEMENT_ID" \
+                    -F "file=@nikto-report.xml" \
                     -F "active=true" \
                     -F "verified=false"
                 '''
