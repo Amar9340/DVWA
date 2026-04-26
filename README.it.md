@@ -1,6 +1,6 @@
 # DAMN VULNERABLE WEB APPLICATION
 
-Damn Vulnerable Web Application (DVWA) è un'applicazione web PHP/MariaDB che è dannatamente vulnerabile. Il suo principale obiettivo è: essere d'aiuto a professionisti di sicurezza informatica per testare le loro skill e i loro strumenti in un ambiente legale,aiutare i web developers a mettere in sicurezza le web applications e aiutare sia studenti che docenti a capire la sicurezza delle web applications in un'ambiente controllato.
+Damn Vulnerable Web Application (DVWA) è un'applicazione web PHP/MariaDB che è dannatamente vulnerabile. Il suo principale obiettivo è: essere d'aiuto a professionisti di sicurezza informatica per testare le loro skill e i loro strumenti in un ambiente legale,aiutare i web developers a mettere in sicurezza le web applications e aiutare sia studenti che docenti a capire la sicurezza delle web applications in un'ambiente controllato.<test forwebhook cahnge>
 
 L'obiettivo di DVWA è **praticare alcune tra le più comuni vulnerabilità web** con **vari livelli di difficoltà**e con una semplice e diretta interfaccia. È opportuno notare che sono presenti sia **vulnerabilità documentate e non documentate** con questo software. Questo è stato fatto intenzionalmente. Si è pregati di provare a scoprire più vulnerabilità possibili.
 - - -
