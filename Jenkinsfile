@@ -59,7 +59,8 @@ pipeline {
             steps {
                 sh '''
                     docker run --rm \
-                    -v $(pwd):/zap/wrk \
+                    --user root \
+                    -v $(pwd):/zap/wrk/:rw \
                     ghcr.io/zaproxy/zaproxy:stable \
                     zap-full-scan.py \
                     -t http://100.31.192.76 \
