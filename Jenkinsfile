@@ -3,6 +3,9 @@ pipeline {
 
     environment {
         SONAR_TOKEN = credentials('sonarqube-token')
+        DOJO_TOKEN = credentials('defectdojo-token')
+        DOJO_URL = 'http://13.219.239.73:8080'
+        ENGAGEMENT_ID = '1'
     }
 
     stages {
@@ -41,11 +44,27 @@ pipeline {
                 sh '''
                     docker run --rm \
                     -v /var/run/docker.sock:/var/run/docker.sock \
+                    -v $(pwd):/output \
                     aquasec/trivy:latest image \
                     --exit-code 0 \
                     --severity HIGH,CRITICAL \
-                    --format table \
+                    --format json \
+                    --output /output/trivy-report.json \
                     dvwa:latest
+                '''
+            }
+        }
+
+        stage('Upload to DefectDojo') {
+            steps {
+                sh '''
+                    curl -X POST $DOJO_URL/api/v2/import-scan/ \
+                    -H "Authorization: Token $DOJO_TOKEN" \
+                    -F "scan_type=Trivy Scan" \
+                    -F "engagement=$ENGAGEMENT_ID" \
+                    -F "file=@trivy-report.json" \
+                    -F "active=true" \
+                    -F "verified=false"
                 '''
             }
         }
