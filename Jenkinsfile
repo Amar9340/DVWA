@@ -1,15 +1,10 @@
 pipeline {
     agent any
     stages {
-        stage('Build') {
+        stage("Build") {
             steps {
-                echo 'Pipeline is working!'
+                echo "Pipeline works"
             }
-        }
-    }
-    post {
-        always {
-            echo 'Pipeline finished!'
         }
     }
 }
