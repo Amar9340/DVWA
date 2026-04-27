@@ -4,7 +4,7 @@ pipeline {
     environment {
         SONAR_TOKEN = credentials('sonarqube-token')
         DOJO_TOKEN = credentials('defectdojo-token')
-        DOJO_URL = 'http://13.219.239.73:8080'
+        DOJO_URL = 'http://18.207.98.160:8080'
         ENGAGEMENT_ID = '1'
     }
 
@@ -63,7 +63,7 @@ pipeline {
                     -v $(pwd):/zap/wrk/:rw \
                     ghcr.io/zaproxy/zaproxy:stable \
                     zap-full-scan.py \
-                    -t http://100.31.192.76 \
+                    -t http://13.220.243.232 \
                     -r zap-report.html \
                     -J zap-report.json \
                     -x zap-report.xml \
@@ -79,7 +79,7 @@ pipeline {
                     --user root \
                     -v $(pwd):/report \
                     secfigo/nikto:latest \
-                    -h http://100.31.192.76 \
+                    -h http://13.220.243.232 \
                     -o /report/nikto-report.xml \
                     -Format xml || true
                 '''
