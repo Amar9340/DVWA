@@ -4,7 +4,7 @@ pipeline {
     environment {
         SONAR_TOKEN = credentials('sonarqube-token')
         DOJO_TOKEN = credentials('defectdojo-token')
-        DOJO_URL = 'http://18.207.98.160:8080'
+        DOJO_URL = 'http://44.221.127.72:8080'
         ENGAGEMENT_ID = '1'
     }
 
@@ -22,7 +22,7 @@ pipeline {
                 withSonarQubeEnv('sonarqube') {
                     sh '''
                         docker run --rm \
-                        -e SONAR_HOST_URL=http://44.222.221.147:9000 \
+                        -e SONAR_HOST_URL=http://18.208.52.254:9000 \
                         -e SONAR_TOKEN=$SONAR_TOKEN \
                         -v $(pwd):/usr/src \
                         sonarsource/sonar-scanner-cli \
@@ -63,7 +63,7 @@ pipeline {
                     -v $(pwd):/zap/wrk/:rw \
                     ghcr.io/zaproxy/zaproxy:stable \
                     zap-full-scan.py \
-                    -t http://13.220.243.232 \
+                    -t http://52.71.121.29 \
                     -r zap-report.html \
                     -J zap-report.json \
                     -x zap-report.xml \
@@ -79,7 +79,7 @@ pipeline {
                     --user root \
                     -v $(pwd):/report \
                     secfigo/nikto:latest \
-                    -h http://13.220.243.232 \
+                    -h http://52.71.121.29 \
                     -o /report/nikto-report.xml \
                     -Format xml || true
                 '''
