@@ -22,7 +22,7 @@ pipeline {
                 withSonarQubeEnv('sonarqube') {
                     sh '''
                         docker run --rm \
-                        -e SONAR_HOST_URL=http://98.92.114.128:9000 \
+                        -e SONAR_HOST_URL=http://44.222.221.147:9000 \
                         -e SONAR_TOKEN=$SONAR_TOKEN \
                         -v $(pwd):/usr/src \
                         sonarsource/sonar-scanner-cli \
