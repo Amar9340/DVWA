@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     environment {
-        SONAR_TOKEN = credentials('sonarqube-token')
-        DOJO_TOKEN = credentials('defectdojo-token')
-        DOJO_URL = 'http://44.221.127.72:8080'
-        ENGAGEMENT_ID = '1'
-        TARGET_URL = 'http://52.71.121.29'
+        SONAR_TOKEN    = credentials('sonarqube-token')
+        DOJO_TOKEN     = credentials('defectdojo-token')
+        DOJO_URL       = 'http://44.221.127.72:8080'
+        ENGAGEMENT_ID  = '1'
+        TARGET_URL     = 'http://52.71.121.29'
     }
 
     stages {
@@ -21,17 +21,15 @@ pipeline {
 
         stage('A04+A01: SonarQube SAST') {
             steps {
-                withSonarQubeEnv('sonarqube') {
-                    sh '''
-                        docker run --rm \
-                        -e SONAR_HOST_URL=http://18.208.52.254:9000 \
-                        -e SONAR_TOKEN=$SONAR_TOKEN \
-                        -v $(pwd):/usr/src \
-                        sonarsource/sonar-scanner-cli \
-                        -Dsonar.projectKey=DVWA \
-                        -Dsonar.sources=. || true
-                    '''
-                }
+                sh '''
+                    docker run --rm \
+                    -e SONAR_HOST_URL=http://18.208.52.254:9000 \
+                    -e SONAR_TOKEN=$SONAR_TOKEN \
+                    -v $(pwd):/usr/src \
+                    sonarsource/sonar-scanner-cli \
+                    -Dsonar.projectKey=DVWA \
+                    -Dsonar.sources=. || true
+                '''
             }
         }
 
@@ -66,8 +64,7 @@ pipeline {
                     --format JSON \
                     --out $(pwd)/dc-report \
                     --disableYarnAudit \
-                    --disableNodeAudit \
-                    || true
+                    --disableNodeAudit || true
                 '''
             }
         }
@@ -87,13 +84,13 @@ pipeline {
         stage('A03: SQL Injection') {
             steps {
                 sh '''
-                    sqlmap -u "$TARGET_URL/vulnerabilities/sqli/?id=1&Submit=Submit" \
+                    sqlmap \
+                    -u "$TARGET_URL/vulnerabilities/sqli/?id=1&Submit=Submit" \
                     --cookie="PHPSESSID=abc123; security=low" \
                     --batch \
                     --level=3 \
                     --risk=2 \
-                    --output-dir=$(pwd)/sqlmap-output \
-                    || true
+                    --output-dir=$(pwd)/sqlmap-output || true
                 '''
             }
         }
@@ -133,12 +130,21 @@ pipeline {
             steps {
                 sh '''
                     curl -s -I $TARGET_URL > $(pwd)/headers-report.txt
-                    echo "=== Checking Security Headers ===" >> $(pwd)/headers-report.txt
-                    grep -i "x-frame-options" $(pwd)/headers-report.txt || echo "MISSING: X-Frame-Options" >> $(pwd)/headers-report.txt
-                    grep -i "x-content-type" $(pwd)/headers-report.txt || echo "MISSING: X-Content-Type-Options" >> $(pwd)/headers-report.txt
-                    grep -i "content-security-policy" $(pwd)/headers-report.txt || echo "MISSING: Content-Security-Policy" >> $(pwd)/headers-report.txt
-                    grep -i "strict-transport-security" $(pwd)/headers-report.txt || echo "MISSING: Strict-Transport-Security" >> $(pwd)/headers-report.txt
-                    grep -i "referrer-policy" $(pwd)/headers-report.txt || echo "MISSING: Referrer-Policy" >> $(pwd)/headers-report.txt
+                    grep -i "x-frame-options" $(pwd)/headers-report.txt \
+                      || echo "MISSING: X-Frame-Options" \
+                      >> $(pwd)/headers-report.txt
+                    grep -i "x-content-type" $(pwd)/headers-report.txt \
+                      || echo "MISSING: X-Content-Type-Options" \
+                      >> $(pwd)/headers-report.txt
+                    grep -i "content-security-policy" $(pwd)/headers-report.txt \
+                      || echo "MISSING: Content-Security-Policy" \
+                      >> $(pwd)/headers-report.txt
+                    grep -i "strict-transport-security" $(pwd)/headers-report.txt \
+                      || echo "MISSING: Strict-Transport-Security" \
+                      >> $(pwd)/headers-report.txt
+                    grep -i "referrer-policy" $(pwd)/headers-report.txt \
+                      || echo "MISSING: Referrer-Policy" \
+                      >> $(pwd)/headers-report.txt
                     cat $(pwd)/headers-report.txt
                 '''
             }
@@ -186,6 +192,12 @@ pipeline {
     post {
         always {
             echo 'OWASP Top 10 Pipeline finished!'
+        }
+        success {
+            echo 'All stages completed. Check DefectDojo for findings.'
+        }
+        failure {
+            echo 'Pipeline failed. Check console output for details.'
         }
     }
 }
